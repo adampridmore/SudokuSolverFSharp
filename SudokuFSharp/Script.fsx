@@ -2,74 +2,87 @@
 open SudokuSolver
 
 let toString x = x.ToString()
-
-let printPuzzle puzzle =
-  let printRow row =  
-    row 
-    |> Seq.map toString 
-    |> Seq.reduce (+)
-
-  let rows =  puzzle |> Seq.map printRow  |> Seq.toArray
   
-  System.String.Join(System.Environment.NewLine, rows)
-  
-let print o = o |> Seq.iter (printfn "%A")
+let printPuzzle (puzzle:int option [][]) =
+  let cellToText cell = match cell with
+                        | None -> "."
+                        | Some(x) -> sprintf "%i" x
 
-let printAndContinue x = 
-  x |> print 
+  let joinCells (cells:int option seq) = 
+    System.String.Join(" ", cells)
+
+  puzzle 
+  |> Seq.map(fun row -> row 
+                        |> Seq.map cellToText
+                        |> Seq.reduce (+)
+                        |> (sprintf "%s") )
+  |> String.concat System.Environment.NewLine
+  |> (printfn "%s")
+
+let printAndContinue x =
+  x |> printPuzzle
+  printfn ""
   x
 
-let puzzle = 
-  [|
-    [|1;2;1;1;1;1;1;1;1|]
-    [|1;1;1;1;1;1;1;1;1|]
-    [|1;1;1;1;1;1;1;1;1|]
-    [|1;1;1;1;1;1;1;1;1|]
-    [|1;1;1;1;1;1;1;1;1|]
-    [|1;1;1;1;1;1;1;1;1|]
-    [|1;1;1;1;1;1;1;1;1|]
-    [|1;1;1;1;1;1;1;1;1|]
-    [|1;1;1;1;1;1;1;1;1|]
-  |]
+let puzzle2 = "
+    427003610
+    080270090
+    009610702
+    190830004
+    700092061
+    860007509
+    008701053
+    016305400
+    503020180"
 
-let puzzle2 = 
-  [|
-    [|4;2;7;0;0;3;6;1;0|]
-    [|0;8;0;2;7;0;0;9;0|]
-    [|0;0;9;6;1;0;7;0;2|]
-    [|1;9;0;8;3;0;0;0;4|]
-    [|7;0;0;0;9;2;0;6;1|]
-    [|8;6;0;0;0;7;5;0;9|]
-    [|0;0;8;7;0;1;0;5;3|]
-    [|0;1;6;3;0;5;4;0;0|]
-    [|5;0;3;0;2;0;1;8;0|]
-  |]
+let puzzle3 = "
+    002000800
+    100200040
+    306800720
+    005300008
+    020000090
+    600001500
+    057003201
+    010007006
+    003000400"
 
-let puzzle3 = [|
-    [|0;0;2;0;0;0;8;0;0|]
-    [|1;0;0;2;0;0;0;4;0|]
-    [|3;0;6;8;0;0;7;2;0|]
-    [|0;0;5;3;0;0;0;0;8|]
-    [|0;2;0;0;0;0;0;9;0|]
-    [|6;0;0;0;0;1;5;0;0|]
-    [|0;5;7;0;0;3;2;0;1|]
-    [|0;1;0;0;0;7;0;0;6|]
-    [|0;0;3;0;0;0;4;0;0|]
-  |]
+let puzzle4= "
+    530070000
+    600195000
+    098000060
+    800060003
+    400803001
+    700020006
+    060000280
+    000419005
+    000080079"
 
-let puzzle4 = [|
-    [|5;3;0;0;7;0;0;0;0|]
-    [|6;0;0;1;9;5;0;0;0|]
-    [|0;9;8;0;0;0;0;6;0|]
-    [|8;0;0;0;6;0;0;0;3|]
-    [|4;0;0;8;0;3;0;0;1|]
-    [|7;0;0;0;2;0;0;0;6|]
-    [|0;6;0;0;0;0;2;8;0|]
-    [|0;0;0;4;1;9;0;0;5|]
-    [|0;0;0;0;8;0;0;7;9|]
-  |]
-     
-puzzle  |> printAndContinue |> solver |> print
-puzzle2 |> printAndContinue |> solver |> print
-puzzle3 |> printAndContinue |> solver |> print
-puzzle4 |> printAndContinue |> solver |> print
+let newLines = [|"\n";"\r\n"|]
+
+let parseChar (c:char) =
+  match c with
+  | ' ' | '0'  -> None
+  | c when System.Char.IsNumber(c) -> Some(System.Int32.Parse(c.ToString()))
+  | o -> failwith (sprintf "Invalid character in puzzle text: '%s'" (o.ToString()) )
+
+let stringToPuzzle (text:string) = 
+  text.Split(newLines, System.StringSplitOptions.RemoveEmptyEntries)
+  |> Seq.map (fun rowText -> rowText.Trim())
+  |> Seq.map (fun rowText -> rowText.ToCharArray())
+  |> Seq.map (fun rowChars -> rowChars 
+                              |> Seq.filter (fun c -> not (System.Char.IsWhiteSpace(c)) )
+                              |> Seq.map parseChar 
+                              |> Seq.toArray)
+  |> Seq.toArray
+  
+//puzzle2 |> stringToPuzzle |> printAndContinue |> solver |> printPuzzle
+//puzzle3 |> stringToPuzzle |> printAndContinue |> solver |> printPuzzle
+//puzzle4 |> stringToPuzzle |> printAndContinue |> solver |> printPuzzle
+
+puzzle4 
+|> stringToPuzzle 
+|> solverSequence 
+|> Seq.iter (fun solution -> solution 
+                             |> printAndContinue 
+                             |> ignore)
+

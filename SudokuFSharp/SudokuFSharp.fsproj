@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SudokuSolver.fs" />
+    <Compile Include="SodokuSolverHelpers.fs" />
     <Compile Include="SudokuSolverTests.fs" />
     <None Include="Script.fsx" />
     <None Include="packages.config" />
