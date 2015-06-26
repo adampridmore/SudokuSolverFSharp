@@ -24,7 +24,7 @@ let printAndContinue x =
 let stringToPuzzle (text:string) = 
   let parseChar (c:char) =
     match c with
-    | ' ' | '0'  -> None
+    | ' ' | '0' |'.'  -> None
     | c when System.Char.IsNumber(c) -> Some(System.Int32.Parse(c.ToString()))
     | o -> failwith (sprintf "Invalid character in puzzle text: '%s'" (o.ToString()) )
 

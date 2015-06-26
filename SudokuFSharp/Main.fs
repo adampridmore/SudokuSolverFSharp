@@ -12,19 +12,20 @@ let puzzle4= "
 ...419..5
 ....8..79"
   
-//puzzle4 
-//|> stringToPuzzle 
-//|> solverSequence 
-//|> Seq.iter (fun solution -> System.Threading.Thread.Sleep(1...)
-//                             System.Console.Clear()
-//                             solution 
-//                             |> printAndContinue 
-//                             |> ignore)
-
 puzzle4 
 |> stringToPuzzle 
 |> solverSequence 
-|> Seq.iter (fun solution -> solution 
+|> Seq.iter (fun solution -> //System.Threading.Thread.Sleep(1000)
+                             System.Console.ReadKey() |> ignore
+                             System.Console.Clear()
+                             solution 
                              |> printAndContinue 
                              |> ignore)
+
+//puzzle4 
+//|> stringToPuzzle 
+//|> solverSequence 
+//|> Seq.iter (fun solution -> solution 
+//                             |> printAndContinue 
+//                             |> ignore)
 
