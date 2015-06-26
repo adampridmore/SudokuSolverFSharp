@@ -41,10 +41,18 @@ let processCell (puzzle:int[][]) x y =
          | _ -> 0
   | x -> x
 
-let solver (puzzle:int[][]) = 
+let nextSolution (puzzle:int[][]) = 
   puzzle 
   |> Seq.mapi(fun y row -> row 
                            |> Seq.mapi (fun x _ -> processCell puzzle x y)
                            |> Seq.toArray
               )
   |> Seq.toArray
+
+let solver (puzzle:int[][]) =
+  Seq.unfold (fun (puzzleA,puzzleB) -> match puzzleA with
+                                       | None -> Some(puzzleB, (Some(puzzleB), nextSolution puzzleB))
+                                       | Some(puzzleA) when puzzleA = puzzleB -> None
+                                       | Some(puzzleA) -> Some(puzzleB, (Some(puzzleB), nextSolution puzzleB))
+              ) (None, puzzle)
+  |> Seq.last

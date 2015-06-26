@@ -69,17 +69,7 @@ let puzzle4 = [|
     [|0;0;0;0;8;0;0;7;9|]
   |]
      
-// puzzle |> printPuzzle
-
-puzzle4
-|> solver
-|> solver
-|> solver
-|> solver
-|> solver
-|> solver
-|> solver
-|> solver
-|> solver
-|> solver
-|> print
+puzzle  |> printAndContinue |> solver |> print
+puzzle2 |> printAndContinue |> solver |> print
+puzzle3 |> printAndContinue |> solver |> print
+puzzle4 |> printAndContinue |> solver |> print
