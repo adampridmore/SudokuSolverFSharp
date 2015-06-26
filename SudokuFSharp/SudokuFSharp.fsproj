@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>da93cbde-0f2a-4d72-95e1-b2b916efa99b</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>SudokuFSharp</RootNamespace>
     <AssemblyName>SudokuFSharp</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
@@ -51,8 +51,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SudokuSolver.fs" />
-    <Compile Include="SodokuSolverHelpers.fs" />
+    <Compile Include="SudokuSolverHelpers.fs" />
     <Compile Include="SudokuSolverTests.fs" />
+    <Compile Include="Main.fs" />
     <None Include="Script.fsx" />
     <None Include="packages.config" />
     <None Include="app.config" />
