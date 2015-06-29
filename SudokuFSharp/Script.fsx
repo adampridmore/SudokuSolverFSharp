@@ -9,7 +9,7 @@ open puzzles
 // puzzle3 |> stringToPuzzle |> printAndContinue |> solver |> printPuzzle
 // puzzle4 |> stringToPuzzle |> printAndContinue |> solver |> printPuzzle
 
-puzzle3b
+puzzle5
 |> stringToPuzzle 
 |> printAndContinue
 |> solver 
@@ -25,3 +25,12 @@ puzzle3b
 //                      (sprintf "|%s|" x),
 //                      "---"))
 //|> Seq.iter (fun (a,b,c) -> printfn "%s\r\n%s\r\n%s" a b c)
+
+
+
+let a = [1;2;3;4;5] |> Set.ofSeq
+let b = [2;3] |> Set.ofSeq
+
+a |> Seq.filter (fun x -> b |> Seq.exists (fun y -> y = x) |> not)
+b |> Set.difference a
+Set.difference a b

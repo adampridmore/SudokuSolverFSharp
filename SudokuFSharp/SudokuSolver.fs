@@ -26,14 +26,18 @@ let getSolvedCellValues (puzzle:int option [][]) cellx celly =
   |] 
   |> Seq.distinct
 
+let getOptionValues optionSeq = 
+  optionSeq 
+  |> Seq.filter(fun (x:'a Option) -> x.IsSome)
+  |> Seq.map (fun (x:'a Option) -> x.Value)
+
 let getPossibleSolutions (puzzle:int option [][]) cellx celly =
-  seq{1..9}
-  |> Seq.filter(fun numToCheck -> getSolvedCellValues puzzle cellx celly 
-                                  |> Seq.exists(fun solution -> match solution with 
-                                                                | None -> false
-                                                                | Some(x) -> numToCheck = x) 
-                                  |> not
-                                  )
+  let oneToNine = seq{1..9} |> Set.ofSeq
+  
+  getSolvedCellValues puzzle cellx celly
+  |> getOptionValues 
+  |> Set.ofSeq
+  |> Set.difference oneToNine
 
 let processCell (puzzle:int option [][]) x y =
   match puzzle.[y].[x] with
@@ -52,11 +56,14 @@ let nextSolution (puzzle:int option [][]) =
   |> Seq.toArray
 
 let solverSequence (puzzle: int option [][]) =
-  Seq.unfold (fun (puzzleA,puzzleB) -> match puzzleA with
-                                       | None -> Some(puzzleB, (Some(puzzleB), nextSolution puzzleB))
-                                       | Some(puzzleA) when puzzleA = puzzleB -> None
-                                       | Some(puzzleA) -> Some(puzzleB, (Some(puzzleB), nextSolution puzzleB))
-              ) (None, puzzle)
+  let unfolder (puzzleA, puzzleB) = 
+    match puzzleA with
+    | None -> Some(puzzleB, (Some(puzzleB), nextSolution puzzleB))
+    | Some(puzzleA) when puzzleA = puzzleB -> None
+    | Some(puzzleA) -> Some(puzzleB, (Some(puzzleB), nextSolution puzzleB))
 
-let solver (puzzle: int option [][]) =
-  (solverSequence puzzle) |> Seq.last
+  Seq.unfold unfolder (None, puzzle)
+
+let solver (puzzle: int option [][]) = 
+  solverSequence puzzle
+  |> Seq.last
