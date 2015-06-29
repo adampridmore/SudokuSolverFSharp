@@ -1,26 +1,15 @@
 ﻿open SudokuSolverHelpers
 open SudokuSolver
+open puzzles
 
-let puzzle4= "
-53..7....
-6..195...
-.98....6.
-8...6...3
-4..8.3..1
-7...2...6
-.6....28.
-...419..5
-....8..79"
-  
 puzzle4 
 |> stringToPuzzle 
 |> solverSequence 
 |> Seq.iter (fun solution -> //System.Threading.Thread.Sleep(1000)
-                             System.Console.ReadKey() |> ignore
                              System.Console.Clear()
-                             solution 
-                             |> printAndContinue 
-                             |> ignore)
+                             solution |> printAndContinue |> ignore
+                             System.Console.ReadKey() |> ignore
+                           )
 
 //puzzle4 
 //|> stringToPuzzle 

@@ -50,6 +50,7 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="puzzles.fs" />
     <Compile Include="SudokuSolver.fs" />
     <Compile Include="SudokuSolverHelpers.fs" />
     <Compile Include="SudokuSolverTests.fs" />
