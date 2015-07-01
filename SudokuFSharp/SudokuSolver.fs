@@ -18,7 +18,7 @@ let getBlockCells (puzzle:int option [][]) cellx celly =
   } |> Seq.toArray
 
 
-let getSolvedCellValues (puzzle) cellx celly = 
+let getSolvedCellValues puzzle cellx celly = 
   Seq.concat [|
     (getRowCells puzzle celly);
     (getColumnCells puzzle cellx);
@@ -26,16 +26,13 @@ let getSolvedCellValues (puzzle) cellx celly =
   |] 
   |> Seq.distinct
 
-let getOptionValues optionSeq = 
-  optionSeq 
-  |> Seq.filter(fun (x:'a Option) -> x.IsSome)
-  |> Seq.map (fun (x:'a Option) -> x.Value)
+let whereOptionValues optionSeq = optionSeq |> Seq.choose id
 
 let getPossibleSolutions puzzle cellx celly =
   let oneToNine = seq{1..9} |> Set.ofSeq
   
   getSolvedCellValues puzzle cellx celly
-  |> getOptionValues 
+  |> whereOptionValues
   |> Set.ofSeq
   |> Set.difference oneToNine
 
@@ -47,7 +44,7 @@ let processCell (puzzle:int option [][]) x y =
             | _ -> None
   | x -> x
 
-let nextSolution (puzzle) = 
+let nextSolution puzzle = 
   puzzle 
   |> Seq.mapi(fun y row -> row 
                            |> Seq.mapi (fun x _ -> processCell puzzle x y)
@@ -55,7 +52,7 @@ let nextSolution (puzzle) =
               )
   |> Seq.toArray
 
-let solverSequence (puzzle) =
+let solverSequence puzzle =
   let unfolder (puzzleA, puzzleB) = 
     match puzzleA with
     | None -> Some(puzzleB, (Some(puzzleB), nextSolution puzzleB))
@@ -65,5 +62,4 @@ let solverSequence (puzzle) =
   Seq.unfold unfolder (None, puzzle)
 
 let solver (puzzle: int option [][]) = 
-  solverSequence puzzle
-  |> Seq.last
+  solverSequence puzzle |> Seq.last
