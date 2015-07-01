@@ -46,11 +46,9 @@ let processCell (puzzle:int option [][]) x y =
 
 let nextSolution puzzle = 
   puzzle 
-  |> Seq.mapi(fun y row -> row 
-                           |> Seq.mapi (fun x _ -> processCell puzzle x y)
-                           |> Seq.toArray
-              )
-  |> Seq.toArray
+  |> Array.mapi(fun y row -> row 
+                             |> Array.mapi (fun x _ -> processCell puzzle x y)
+                )
 
 let solverSequence puzzle =
   let unfolder (puzzleA, puzzleB) = 
@@ -61,5 +59,5 @@ let solverSequence puzzle =
 
   Seq.unfold unfolder (None, puzzle)
 
-let solver (puzzle: int option [][]) = 
+let solver puzzle = 
   solverSequence puzzle |> Seq.last

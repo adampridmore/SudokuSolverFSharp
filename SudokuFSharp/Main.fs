@@ -2,13 +2,14 @@
 open SudokuSolver
 open puzzles
 
-puzzle4 
+puzzle4
 |> stringToPuzzle 
 |> solverSequence 
-|> Seq.iter (fun solution -> //System.Threading.Thread.Sleep(1000)
+|> Seq.iter (fun solution -> 
                              System.Console.Clear()
-                             solution |> printAndContinue |> ignore
-                             System.Console.ReadKey() |> ignore
+                             solution |> printPuzzle
+                             System.Threading.Thread.Sleep(250)
+                             //System.Console.ReadKey() |> ignore
                            )
 
 //puzzle4 
