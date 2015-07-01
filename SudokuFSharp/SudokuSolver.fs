@@ -18,7 +18,7 @@ let getBlockCells (puzzle:int option [][]) cellx celly =
   } |> Seq.toArray
 
 
-let getSolvedCellValues (puzzle:int option [][]) cellx celly = 
+let getSolvedCellValues (puzzle) cellx celly = 
   Seq.concat [|
     (getRowCells puzzle celly);
     (getColumnCells puzzle cellx);
@@ -31,7 +31,7 @@ let getOptionValues optionSeq =
   |> Seq.filter(fun (x:'a Option) -> x.IsSome)
   |> Seq.map (fun (x:'a Option) -> x.Value)
 
-let getPossibleSolutions (puzzle:int option [][]) cellx celly =
+let getPossibleSolutions puzzle cellx celly =
   let oneToNine = seq{1..9} |> Set.ofSeq
   
   getSolvedCellValues puzzle cellx celly
@@ -47,7 +47,7 @@ let processCell (puzzle:int option [][]) x y =
             | _ -> None
   | x -> x
 
-let nextSolution (puzzle:int option [][]) = 
+let nextSolution (puzzle) = 
   puzzle 
   |> Seq.mapi(fun y row -> row 
                            |> Seq.mapi (fun x _ -> processCell puzzle x y)
@@ -55,7 +55,7 @@ let nextSolution (puzzle:int option [][]) =
               )
   |> Seq.toArray
 
-let solverSequence (puzzle: int option [][]) =
+let solverSequence (puzzle) =
   let unfolder (puzzleA, puzzleB) = 
     match puzzleA with
     | None -> Some(puzzleB, (Some(puzzleB), nextSolution puzzleB))
