@@ -69,17 +69,19 @@ let filterPossibilities x y puzzle possibilities =
   Set.difference (possibilities |> Set.ofSeq) (puzzle |> getSolvedCells |> Set.ofSeq) 
   |> Set.toList
 
-let filterPuzzle (puzzle:Puzzle) =
-  let convertUnsolvedToSolvedCell (cell:Cell) =
-    match cell with
-    | Solved(x) -> Solved(x)
-    | Unsolved([x]) -> Solved(x)
-    | Unsolved(x) -> Unsolved(x)
+// This converts any unsolved cell with a single solution to a solved cell
+let convertUnsolvedToSolvedCell (cell:Cell) =
+  match cell with
+  | Solved(x) -> Solved(x)
+  | Unsolved([single]) -> Solved(single)
+  | Unsolved(many) -> Unsolved(many)
 
+let filterPuzzle (puzzle:Puzzle) =
   let filterCell x y (cell:Cell) = 
     match cell with
     | Solved(v) -> Solved(v)
-    | Unsolved(possibilities) -> Unsolved(filterPossibilities x y puzzle possibilities) |> convertUnsolvedToSolvedCell
+    | Unsolved(possibilities) -> Unsolved(filterPossibilities x y puzzle possibilities) 
+                                 |> convertUnsolvedToSolvedCell
 
   let filterRow y (row:Row) =
     row.Cells

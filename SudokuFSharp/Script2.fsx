@@ -12,7 +12,7 @@ let printPossibilities (puzzle:Puzzle) =
   
   let printCellToString (cell:Cell) = 
     let cellText = match cell with
-                   | Solved(x) -> (sprintf "*%s*" (x |> string)) |> padd
+                   | Solved(x) -> (sprintf "%s" (x |> string)) |> padd
                    | Unsolved(list) -> list
                                        |> Seq.map string 
                                        |> Seq.reduce (+)
@@ -31,10 +31,11 @@ let printPossibilities (puzzle:Puzzle) =
   |> Seq.map processRow
   |> Seq.reduce (+)
   |> printfn "%s"
-
-puzzle3a
+  
+puzzle4
 |> stringToPuzzle
 |> puzzleToPossibilities
 |> solverSequence 
+//|> Seq.length |> printfn "%A"
 // |> Seq.last |> Seq.singleton
-|> Seq.map printPossibilities
+|> Seq.iter printPossibilities
