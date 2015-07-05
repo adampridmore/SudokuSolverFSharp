@@ -3,39 +3,64 @@
 #load "puzzles.fs"
 open SudokuSolverHelpers
 
+type Cell = 
+  | Solved of int
+  | Unsolved of int seq
+
+type Row = {
+  Cells : Cell array
+}
+
+
+type Puzzle = {
+  Rows : Row array
+} 
+  
 open puzzles
 
 let nl = System.Environment.NewLine
 
 let puzzleToPossibilities puzzle =
-  let processCell x y cell = 
+  let toCell cell = 
     match cell with 
-    | Some(x) -> Seq.singleton x
-    | _ -> seq{1..9}
+    | Some(cell) -> Solved(cell)
+    | _ -> Unsolved(seq{1..9})
+
+  let toRow cells =
+    {Row.Cells = (cells |> Seq.toArray )}
+
+  let toPuzzle rows =
+    {Puzzle.Rows = (rows |> Seq.toArray)}
 
   puzzle 
-  |> Seq.mapi(fun x row -> row |> Seq.mapi (fun y cell -> processCell x y cell))
+  |> Seq.map(fun row -> row |> Seq.map toCell)
+  |> Seq.map (fun cells -> cells |> toRow)
+  |> toPuzzle
 
-let printPossibilities (possibilities:int seq seq seq) = 
+let printPossibilities (puzzle:Puzzle) = 
   let padd (s:string) = 
     s.PadRight(9)
   
-  let printCellToString cell = 
-    let cellText = cell 
-                   |> Seq.map string 
-                   |> Seq.reduce (+)
-                   |> padd
+  let printCellToString (cell:Cell) = 
+    let cellText = match cell with
+                   | Solved(x) -> string x |> padd
+                   | Unsolved(list) -> list
+                                       |> Seq.map string 
+                                       |> Seq.reduce (+)
+                                       |> padd
+
     sprintf "|%s|" cellText
 
-  let processRow (row: int seq seq) = 
-    let line = row 
+  let processRow (row:Row) = 
+    
+
+    let line = row.Cells
                |> Seq.map printCellToString
                |> Seq.reduce (+)
 
     sprintf "||%s||%s" line nl
-        
-  
-  possibilities 
+ 
+  puzzle.Rows
   |> Seq.map processRow
   |> Seq.reduce (+)
   |> printfn "%s"
