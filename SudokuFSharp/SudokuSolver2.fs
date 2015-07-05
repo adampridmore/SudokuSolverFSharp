@@ -2,7 +2,7 @@
 
 type Cell = 
   | Solved of int
-  | Unsolved of int seq
+  | Unsolved of int list
 
 type Row = {
   Cells : Cell array
@@ -15,10 +15,11 @@ type Puzzle = {
 
 let nl = System.Environment.NewLine
 
+// Converts an option int to a Cell
 let toCell cell = 
   match cell with 
   | Some(cell) -> Solved(cell)
-  | _ -> Unsolved(seq{1..9})
+  | None -> Unsolved([1..9])
 
 let toRow cells =
   {Row.Cells = (cells |> Seq.toArray )}
@@ -26,25 +27,30 @@ let toRow cells =
 let toPuzzle rows =
   {Puzzle.Rows = (rows |> Seq.toArray)}
 
+// Filters cells to a seq of just solved values
+let justSolved cells =
+  cells 
+  |> Seq.choose (fun cell -> match cell with 
+                             | Solved(v) -> Some(v)
+                             | Unsolved(_) -> None)
+
 let getRowCells (puzzle:Puzzle) rowIndex = 
-   puzzle.Rows.[rowIndex].Cells |> Seq.choose (fun cell -> match cell with 
-                                                           | Solved(v) -> Some(v)
-                                                           | _ -> None)
+   puzzle.Rows.[rowIndex].Cells 
+   
+let getColumnCells (puzzle:Puzzle) columnIndex = 
+  seq{0..8}
+  |> Seq.map(fun currentRowIndex -> puzzle.Rows.[currentRowIndex].Cells.[columnIndex])
 
-//let getColumnCells (puzzle:int option [][]) columnIndex = 
-//  seq{0..8}
-//  |> Seq.map(fun currentRowIndex -> puzzle.[currentRowIndex].[columnIndex])
-//  |> Seq.toArray
-//
-//let getBlockCells (puzzle:int option [][]) cellx celly = 
-//  let blockIndexX = cellx / 3
-//  let blockIndexY = celly / 3
-//  seq{
-//    for x in 0..2 do 
-//      for y in 0..2 do
-//        yield puzzle.[blockIndexY*3+y].[blockIndexX*3+x]
-//  } |> Seq.toArray
+let getBlockCells x y (puzzle:Puzzle) = 
+  let blockIndexX = x / 3
+  let blockIndexY = y / 3
 
+  seq{
+    for y in 0..2 do
+      for x in 0..2 do 
+        yield puzzle.Rows.[blockIndexY*3+y].Cells.[blockIndexX*3+x]
+  }
+  
 let puzzleToPossibilities puzzle =
   puzzle 
   |> Seq.map(fun row -> row |> Seq.map toCell)
@@ -52,16 +58,28 @@ let puzzleToPossibilities puzzle =
   |> toPuzzle
 
 let filterPossibilities x y puzzle possibilities =
-  let eliminated = getRowCells puzzle y |> Set.ofSeq
+  let getSolvedCells puzzle =
+    Seq.concat [|
+      getRowCells puzzle y |> justSolved
+      getColumnCells puzzle x |> justSolved
+      getBlockCells x y puzzle |> justSolved
+    |]
+    |> Seq.distinct
 
-  Set.difference (possibilities |> Set.ofSeq) eliminated |> Set.toSeq
-
+  Set.difference (possibilities |> Set.ofSeq) (puzzle |> getSolvedCells |> Set.ofSeq) 
+  |> Set.toList
 
 let filterPuzzle (puzzle:Puzzle) =
+  let convertUnsolvedToSolvedCell (cell:Cell) =
+    match cell with
+    | Solved(x) -> Solved(x)
+    | Unsolved([x]) -> Solved(x)
+    | Unsolved(x) -> Unsolved(x)
+
   let filterCell x y (cell:Cell) = 
     match cell with
     | Solved(v) -> Solved(v)
-    | Unsolved(possibilities) -> Unsolved(filterPossibilities x y puzzle possibilities)
+    | Unsolved(possibilities) -> Unsolved(filterPossibilities x y puzzle possibilities) |> convertUnsolvedToSolvedCell
 
   let filterRow y (row:Row) =
     row.Cells
@@ -72,7 +90,15 @@ let filterPuzzle (puzzle:Puzzle) =
   |> Seq.mapi filterRow
   |> toPuzzle
 
+let solverSequence puzzle =
+  let unfolder (puzzleA, puzzleB) = 
+    match puzzleA with
+    | None -> Some(puzzleB, (Some(puzzleB), filterPuzzle puzzleB))
+    | Some(puzzleA) when puzzleA = puzzleB -> None
+    | Some(puzzleA) -> Some(puzzleB, (Some(puzzleB), filterPuzzle puzzleB))
+
+  Seq.unfold unfolder (None, puzzle)
+
 let solver puzzleArarys =
   let puzzle = puzzleArarys |> puzzleToPossibilities
-  
   puzzle |> filterPuzzle

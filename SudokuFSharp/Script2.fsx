@@ -8,11 +8,11 @@ open puzzles
 
 let printPossibilities (puzzle:Puzzle) = 
   let padd (s:string) = 
-    s.PadRight(9)
+    s.PadRight(18)
   
   let printCellToString (cell:Cell) = 
     let cellText = match cell with
-                   | Solved(x) -> string x |> padd
+                   | Solved(x) -> (sprintf "*%s*" (x |> string)) |> padd
                    | Unsolved(list) -> list
                                        |> Seq.map string 
                                        |> Seq.reduce (+)
@@ -32,12 +32,9 @@ let printPossibilities (puzzle:Puzzle) =
   |> Seq.reduce (+)
   |> printfn "%s"
 
-//let solver (puzzle:int option [][]) =
-//  puzzle 
-//  |> puzzleToPossibilities
-//  |> printPossibilities
-
-puzzle3a 
+puzzle3a
 |> stringToPuzzle
-|> solver
-|> printPossibilities
+|> puzzleToPossibilities
+|> solverSequence 
+// |> Seq.last |> Seq.singleton
+|> Seq.map printPossibilities
