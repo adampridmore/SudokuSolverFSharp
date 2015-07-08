@@ -2,7 +2,7 @@
 open SudokuSolver
 open puzzles
 
-puzzle3a
+puzzle4
 |> stringToPuzzle 
 |> solverSequence 
 |> Seq.iter (fun solution -> 

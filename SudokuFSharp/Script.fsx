@@ -1,9 +1,11 @@
 ﻿#load "SudokuSolver.fs"
-#load "SudokuSolverHelpers.fs"
 #load "puzzles.fs"
+#load "PuzzleTypes.fs"
+#load "SudokuSolverHelpers.fs"
 open SudokuSolver
 open SudokuSolverHelpers
 open puzzles
+open PuzzleTypes
   
 // puzzle2 |> stringToPuzzle |> printAndContinue |> solver |> printPuzzle
 // puzzle3 |> stringToPuzzle |> printAndContinue |> solver |> printPuzzle

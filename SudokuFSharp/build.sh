@@ -1,0 +1,1 @@
+fsharpc -r ../packages/NUnit.2.6.3/lib/nunit.framework.dll -r ../packages/FsUnit.1.3.0.1/Lib/Net40/FsUnit.NUnit.dll "puzzles.fs" "PuzzleTypes.fs" "SudokuSolver.fs" "SudokuSolver2.fs" "SudokuSolverHelpers.fs" "SudokuSolver2Tests.fs" "SudokuSolverTests.fs" "Main.fs"  --out:SudokuSolver_mono.exe

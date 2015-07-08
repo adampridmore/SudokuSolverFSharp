@@ -1,19 +1,6 @@
 ﻿module SudokuSolver2
 
-type Cell = 
-  | Solved of int
-  | Unsolved of int list
-
-type Row = {
-  Cells : Cell array
-}
-
-
-type Puzzle = {
-  Rows : Row array
-}
-
-let nl = System.Environment.NewLine
+open PuzzleTypes
 
 // Converts an option int to a Cell
 let toCell cell = 
@@ -76,6 +63,14 @@ let convertUnsolvedToSolvedCell (cell:Cell) =
   | Unsolved([single]) -> Solved(single)
   | Unsolved(many) -> Unsolved(many)
 
+let mapPuzzle puzzle operation =
+  let filterRow y (row:Row) =
+    row.Cells
+    |> Seq.mapi (fun x cell ->  operation x y cell)
+
+  puzzle.Rows 
+  |> Seq.mapi filterRow
+  
 let filterPuzzle (puzzle:Puzzle) =
   let filterCell x y (cell:Cell) = 
     match cell with

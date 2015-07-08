@@ -1,4 +1,7 @@
 ﻿module SudokuSolverHelpers
+open PuzzleTypes
+
+let nl = System.Environment.NewLine
 
 let printPuzzle (puzzle:int option [][]) =
   let cellToText cell = match cell with
@@ -38,3 +41,31 @@ let stringToPuzzle (text:string) =
                               |> Seq.map parseChar 
                               |> Seq.toArray)
   |> Seq.toArray
+
+
+
+let printPossibilities (puzzle:Puzzle) = 
+  let padd (s:string) = 
+    s.PadRight(18)
+  
+  let printCellToString (cell:Cell) = 
+    let cellText = match cell with
+                   | Solved(x) -> (sprintf "%s" (x |> string)) |> padd
+                   | Unsolved(list) -> list
+                                       |> Seq.map string 
+                                       |> Seq.reduce (+)
+                                       |> padd
+
+    sprintf "|%s|" cellText
+
+  let processRow (row:Row) = 
+    let line = row.Cells
+               |> Seq.map printCellToString
+               |> Seq.reduce (+)
+    sprintf "||%s||%s" line nl
+
+  printfn "" 
+  puzzle.Rows
+  |> Seq.map processRow
+  |> Seq.reduce (+)
+  |> printfn "%s"
