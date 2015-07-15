@@ -1,10 +1,10 @@
 ﻿#load "puzzles.fs"
 #load "PuzzleTypes.fs"
-#load "SudokuSolver2.fs"
+#load "SudokuSolver.fs"
 #load "SudokuSolverHelpers.fs"
 
 open SudokuSolverHelpers
-open SudokuSolver2
+open SudokuSolver
   
 open puzzles
   

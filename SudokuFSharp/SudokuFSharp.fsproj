@@ -52,11 +52,11 @@
   <ItemGroup>
     <Compile Include="puzzles.fs" />
     <Compile Include="PuzzleTypes.fs" />
-    <Compile Include="SudokuSolver2.fs" />
+    <Compile Include="SudokuSolver.fs" />
     <Compile Include="SudokuSolverHelpers.fs" />
-    <Compile Include="SudokuSolver2Tests.fs" />
+    <Compile Include="SudokuSolverTests.fs" />
     <Compile Include="Main.fs" />
-    <None Include="Script2.fsx" />
+    <None Include="Script.fsx" />
     <None Include="packages.config" />
     <None Include="app.config" />
   </ItemGroup>

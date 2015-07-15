@@ -2,7 +2,7 @@
 
 open NUnit.Framework
 open FsUnit
-open SudokuSolver2
+open SudokuSolver
 open SudokuSolverHelpers
 open puzzles
 open PuzzleTypes

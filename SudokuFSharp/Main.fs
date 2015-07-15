@@ -1,5 +1,5 @@
 ﻿open SudokuSolverHelpers
-open SudokuSolver2
+open SudokuSolver
 
 open puzzles
 open PuzzleTypes

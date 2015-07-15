@@ -1,6 +1,6 @@
 ﻿module SudokuSolverHelpers
 
-open SudokuSolver2
+open SudokuSolver
 open PuzzleTypes
 
 let nl = System.Environment.NewLine

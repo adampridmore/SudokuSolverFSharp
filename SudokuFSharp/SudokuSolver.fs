@@ -1,4 +1,4 @@
-﻿module SudokuSolver2
+﻿module SudokuSolver
 
 open PuzzleTypes
 
