@@ -1,21 +1,17 @@
 ﻿open SudokuSolverHelpers
-open SudokuSolver
+open SudokuSolver2
+
 open puzzles
+open PuzzleTypes
 
-puzzle4
+puzzle3a
 |> stringToPuzzle 
-|> solverSequence 
-|> Seq.iter (fun solution -> 
-                             System.Console.Clear()
-                             solution |> printPuzzle
-                             System.Threading.Thread.Sleep(250)
-                             //System.Console.ReadKey() |> ignore
-                           )
+|> puzzleToPossibilities
+|> solvePuzzle
+//|> cellSequence |> Seq.iter (fun c -> match c with 
+//                                      | Solved(x) -> printf "%d" x
+//                                      | Unsolved(_) -> printf ".")
+|> printPossibilities
 
-//puzzle4 
-//|> stringToPuzzle 
-//|> solverSequence 
-//|> Seq.iter (fun solution -> solution 
-//                             |> printAndContinue 
-//                             |> ignore)
+
 

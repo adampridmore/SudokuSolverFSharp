@@ -63,14 +63,16 @@ let convertUnsolvedToSolvedCell (cell:Cell) =
   | Unsolved([single]) -> Solved(single)
   | Unsolved(many) -> Unsolved(many)
 
-let mapPuzzle puzzle operation =
-  let filterRow y (row:Row) =
+let mapPuzzle (puzzle:Puzzle) mapCell =
+  let mapRow y (row:Row) =
     row.Cells
-    |> Seq.mapi (fun x cell ->  operation x y cell)
+    |> Seq.mapi (fun x cell ->  mapCell x y cell)
+    |> toRow
 
   puzzle.Rows 
-  |> Seq.mapi filterRow
-  
+  |> Seq.mapi mapRow
+  |> toPuzzle
+
 let filterPuzzle (puzzle:Puzzle) =
   let filterCell x y (cell:Cell) = 
     match cell with
@@ -78,14 +80,7 @@ let filterPuzzle (puzzle:Puzzle) =
     | Unsolved(possibilities) -> Unsolved(filterPossibilities x y puzzle possibilities) 
                                  |> convertUnsolvedToSolvedCell
 
-  let filterRow y (row:Row) =
-    row.Cells
-    |> Seq.mapi (fun x cell ->  filterCell x y cell)
-    |> toRow
-
-  puzzle.Rows 
-  |> Seq.mapi filterRow
-  |> toPuzzle
+  mapPuzzle puzzle filterCell
 
 let solverSequence puzzle =
   let unfolder (puzzleA, puzzleB) = 
@@ -96,6 +91,20 @@ let solverSequence puzzle =
 
   Seq.unfold unfolder (None, puzzle)
 
+let cellSequence (puzzle:Puzzle) =
+  puzzle.Rows |> Seq.collect(fun row -> row.Cells)
+
+let isUnsolved puzzle = 
+  (cellSequence puzzle)
+  |> Seq.exists (fun (c:Cell) -> match c with 
+                                 | Solved(_) -> false
+                                 | Unsolved(_) -> true)
+
+let isSolved puzzle = puzzle |> isUnsolved |> not
+
+let rec solvePuzzle puzzle = 
+  puzzle  |> solverSequence |> Seq.last
+  
 let solver puzzleArarys =
   let puzzle = puzzleArarys |> puzzleToPossibilities
   puzzle |> filterPuzzle
